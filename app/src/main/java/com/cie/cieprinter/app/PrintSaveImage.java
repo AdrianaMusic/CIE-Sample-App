@@ -1,25 +1,11 @@
-/**
- * Copyright 2014 Looped Labs pvt. Ltd. http://loopedlabs.com
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package com.cie.cieprinter.app;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -27,7 +13,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -52,34 +37,33 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cie.btp.CieBluetoothPrinter;
 import com.cie.btp.CieImageFactory;
 import com.cie.btp.DebugLog;
-import com.cie.btp.PrintCmds;
 import com.cie.cieprinter.R;
 import com.cie.cieprinter.loopedlabs.LlFragment;
-import com.cie.cieprinter.selector.FileOperation;
-import com.cie.cieprinter.selector.FileSelector;
-import com.cie.cieprinter.selector.OnHandleFileListener;
+import com.cie.cieprinter.loopedlabs.selector.FileOperation;
+import com.cie.cieprinter.loopedlabs.selector.FileSelector;
+import com.cie.cieprinter.loopedlabs.selector.OnHandleFileListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-
 public class PrintSaveImage extends LlFragment {
 	private boolean isAscii;
 	private byte[] logo;
 	private Context mContext;
-    private Spinner indexValue;
-    private int indexNumber;
+	private Spinner indexValue;
+	private int indexNumber;
 	private TextView txtView;
 	final String[] mFileFilter = {".png",".bmp",".jpeg",".jpg"};
 	private String[] index= {"1","2","3","4","5","6","7","8","9"};
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public static CieBluetoothPrinter mBtp = CieBluetoothPrinter.INSTANCE;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);	
+		super.onCreate(savedInstanceState);
 		Bundle b = getArguments();
 		if(b != null){
 			isAscii = b.getBoolean("is_ascii");
@@ -87,79 +71,72 @@ public class PrintSaveImage extends LlFragment {
 
 	}
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.print_save_image, container, false);
 
 		initControls(view);
-        indexValue=(Spinner) view.findViewById(R.id.index);
-        DebugLog.logTrace("index value  " + index);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, index);
-        indexValue.setAdapter(adapter);
-        AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+		indexValue=(Spinner) view.findViewById(R.id.index);
+		DebugLog.logTrace("index value  "+index);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, index);
+		indexValue.setAdapter(adapter);
+		AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
 
-            @Override
-            public void onItemSelected(AdapterView<?> aAdapter, View aView, int arg2, long arg3) {
-                TextView textViewItem = (TextView) aView;
+			@Override
+			public void onItemSelected(AdapterView<?> aAdapter, View aView, int arg2, long arg3) {
+				TextView textViewItem = (TextView) aView;
 				try {
 					indexNumber = Integer.valueOf(textViewItem.getText().toString());
 				}catch (NullPointerException e)
 				{
 					DebugLog.logException(e);
 				}
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
 
-            }
-        };
-        indexValue.setOnItemSelectedListener(onItemSelectedListener);
+			}
+		};
+		indexValue.setOnItemSelectedListener(onItemSelectedListener);
 
-        Button SaveImage=(Button) view.findViewById(R.id.saveImage);
-        SaveImage.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
+		Button SaveImage=(Button) view.findViewById(R.id.saveImage);
+		SaveImage.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				try {
 					if (fileUri.getPath() == null) {
-							Toast.makeText(getActivity(), "No Logo Selected",
-									Toast.LENGTH_SHORT).show();
-							return;
-						}
-                    Boolean Invert;
-                    Invert = !bInvertBitmap;
-                    MainActivity.mBtp.saveImage(fileUri.getPath(), Invert, threshold, indexNumber);
-                    Toast.makeText(getActivity(), "Image saved on index " + indexNumber,
-							Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity(), "No Logo Selected",
+								Toast.LENGTH_SHORT).show();
+						return;
+					}
+					Boolean Invert;
+					Invert = !bInvertBitmap;
+					boolean r= mBtp.saveImage(fileUri.getPath(), Invert, threshold, indexNumber);
+					if (r) {
+						Toast.makeText(getActivity(), "Image saved on index "+indexNumber,
+								Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(getActivity(), MainActivity.mBtp.getPrinterStatusMessage(),Toast.LENGTH_SHORT).show();
+					}
 
-                }catch (NumberFormatException e) {
+				}catch (NumberFormatException e) {
 					Toast.makeText(getActivity(), "Enter Index for save Image",
 							Toast.LENGTH_SHORT).show();
 
-                }catch (NullPointerException e){
+				}catch (NullPointerException e){
 					DebugLog.logException(e);
 				}
-            }
-        });
-        Button printSavedImage=(Button) view.findViewById(R.id.printImage);
+			}
+		});
+		Button printSavedImage=(Button) view.findViewById(R.id.printImage);
 		printSavedImage.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-                try {
-
-                    PrintCmds cmd = new PrintCmds();
-                    cmd.printSavedImage(indexNumber);
-                    byte[] d = cmd.PrintCmd();
-                    mListener.onAppSignal(AppConsts.PRINT, d);
-
-                }catch (NumberFormatException e){
-                    Toast.makeText(getActivity(), "Enter Index for print Image",
-							Toast.LENGTH_SHORT).show();
-                }
+				mBtp.printSavedImage(indexNumber);
 			}
 		});
-        Button printDirect=(Button)view.findViewById(R.id.printDirect);
+		Button printDirect=(Button)view.findViewById(R.id.printDirect);
 		printDirect.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				try {
@@ -172,7 +149,12 @@ public class PrintSaveImage extends LlFragment {
 					Invert = !bInvertBitmap;
 					DebugLog.logTrace("A : " + bIgnoreAlpha + " I : " + Invert + " T : " + threshold);
 
-					MainActivity.mBtp.printDirect(fileUri.getPath(), Invert, threshold);
+					boolean r= mBtp.printDirect(fileUri.getPath(), Invert, threshold);
+					if (r) {
+						Toast.makeText(getActivity(), "Image Printed",Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(getActivity(), MainActivity.mBtp.getPrinterStatusMessage(),Toast.LENGTH_SHORT).show();
+					}
 
 					DebugLog.logTrace("byte" + logo);
 				}catch (NullPointerException e){
@@ -224,7 +206,6 @@ public class PrintSaveImage extends LlFragment {
 	/**
 	 * Receiving activity result method will be called after closing the camera
 	 **/
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// if the result is capturing Image
@@ -249,7 +230,7 @@ public class PrintSaveImage extends LlFragment {
 		} else if (requestCode == RESULT_LOAD_IMAGE
 				&& resultCode == Activity.RESULT_OK && null != data) {
 			Uri selectedImage = data.getData();
-			String[] filePathColumn = {  };
+			String[] filePathColumn = { MediaStore.Images.Media.DATA  };
 
 			Cursor cursor = getActivity().getContentResolver().query(selectedImage,
 					filePathColumn, null, null, null);
@@ -257,9 +238,8 @@ public class PrintSaveImage extends LlFragment {
 
 			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
 			String picturePath = cursor.getString(columnIndex);
-
 			cursor.close();
-			fileUri = Uri.parse(fileUri.getPath());
+			fileUri = Uri.parse(picturePath);
 			if (fileUri != null) {
 				bImageSelected = true;
 				previewCapturedImage();
@@ -275,7 +255,28 @@ public class PrintSaveImage extends LlFragment {
 	/**
 	 * Display image
 	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void loadImage(Intent data){
+		Uri selectedImage = data.getData();
+		String[] filePathColumn = {  };
+
+		Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+				filePathColumn, null, null, null);
+		cursor.moveToFirst();
+
+		int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+		String picturePath = cursor.getString(columnIndex);
+		cursor.close();
+		fileUri = Uri.parse(picturePath);
+		if (fileUri != null) {
+			bImageSelected = true;
+			previewCapturedImage();
+			previewImage(0);
+		} else {
+			Toast.makeText(getActivity(),
+					"media handler not available, choose another image",
+					Toast.LENGTH_SHORT).show();
+		}
+	}
 	private void previewCapturedImage() {
 		if (!isImageSizeOK()) {
 			Toast.makeText(getActivity(), R.string.img_too_small, Toast.LENGTH_LONG)
@@ -309,19 +310,19 @@ public class PrintSaveImage extends LlFragment {
 
 
 
-				float ratio = (float) bitmap.getWidth()
-						/ (float) bitmap.getHeight();
+			float ratio = (float) bitmap.getWidth()
+					/ (float) bitmap.getHeight();
 
-				int imgX = ivAsIsWidth;
-				int imgY = (int) (ivAsIsWidth / ratio);
+			int imgX = ivAsIsWidth;
+			int imgY = (int) (ivAsIsWidth / ratio);
 
-				if (imgY > ivAsIsHeight) {
-					imgY = ivAsIsHeight;
-					imgX = (int) (ratio * ivAsIsHeight);
-				}
+			if (imgY > ivAsIsHeight) {
+				imgY = ivAsIsHeight;
+				imgX = (int) (ratio * ivAsIsHeight);
+			}
 
-				imgPreviewAsIs.setImageBitmap(Bitmap.createScaledBitmap(bitmap,
-						imgX, imgY, false));
+			imgPreviewAsIs.setImageBitmap(Bitmap.createScaledBitmap(bitmap,
+					imgX, imgY, false));
 
 		} catch (NullPointerException e) {
 			e.printStackTrace();
@@ -334,20 +335,47 @@ public class PrintSaveImage extends LlFragment {
 	private boolean isImageSizeOK() {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
-			BitmapFactory.decodeFile(fileUri.getPath(), options);
-			orgImgHeight = options.outHeight;
-			orgImgWidth = options.outWidth;
+		BitmapFactory.decodeFile(fileUri.getPath(), options);
+		orgImgHeight = options.outHeight;
+		orgImgWidth = options.outWidth;
 
-			if ((orgImgHeight < MIN_IMG_SIZE) || (orgImgWidth < MIN_IMG_SIZE)) {
-				return false;
-			}
-			return true;
+		if ((orgImgHeight < MIN_IMG_SIZE) || (orgImgWidth < MIN_IMG_SIZE)) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
 	 * Capturing Camera Image will launch camera app request image capture
 	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public void dialogBox() {
+		CharSequence storage[] = new CharSequence[]{"Select from Gallery", "Select from SD Card"};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle("Pick a storage");
+		builder.setItems(storage, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+					case 0:
+						Intent i = new Intent(
+								Intent.ACTION_PICK,
+								MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+						startActivityForResult(i, RESULT_LOAD_IMAGE);
+//						loadImage(i);
+						break;
+					case 1:
+						mFileSel = new FileSelector(getActivity(), FileOperation.LOAD, mLoadFileListener, mFileFilter);
+						mFileSel.show();
+						break;
+				}
+			}
+
+		});
+		builder.show();
+	}
+
 	private void captureImage() {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -438,7 +466,7 @@ public class PrintSaveImage extends LlFragment {
 			imgLogoPreview.setImageBitmap(Bitmap.createScaledBitmap(bImg, imgX,
 					imgY, false));
 		}catch (NullPointerException e){
-		DebugLog.logException(e);
+			DebugLog.logException(e);
 		}
 	}
 
@@ -480,17 +508,17 @@ public class PrintSaveImage extends LlFragment {
 		btnFromGallery = (Button) v.findViewById(R.id.btnFromGallery);
 		btnFromGallery.setOnClickListener(new OnClickListener() {
 
-			@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 			@Override
 			public void onClick(View v) {
+				dialogBox();
 //				Intent i = new Intent(
 //						Intent.ACTION_PICK,
 //						MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 //
 //				startActivityForResult(i, RESULT_LOAD_IMAGE);
 
-				mFileSel = new FileSelector(getActivity(), FileOperation.LOAD, mLoadFileListener, mFileFilter);
-				mFileSel.show();
+//				mFileSel = new FileSelector(getActivity(), FileOperation.LOAD, mLoadFileListener, mFileFilter);
+//				mFileSel.show();
 			}
 		});
 
@@ -506,11 +534,10 @@ public class PrintSaveImage extends LlFragment {
 		cbInvertBitmap
 				.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
 
-					@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-                        DebugLog.logTrace();
+												 boolean isChecked) {
+						DebugLog.logTrace();
 						bInvertBitmap = isChecked;
 						try {
 							if (fileUri.getPath() == null) {
@@ -531,7 +558,7 @@ public class PrintSaveImage extends LlFragment {
 			int progressChanged = 0;
 
 			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
+										  boolean fromUser) {
 				progressChanged = progress;
 			}
 
@@ -551,7 +578,7 @@ public class PrintSaveImage extends LlFragment {
 		@Override
 		public void handleFile(final String filePath) {
 			txtView.setText(filePath);
-			fileUri= Uri.parse(filePath);
+			fileUri=Uri.parse(filePath);
 			previewImage(threshold);
 			previewCapturedImage();
 			/*Intent i=new Intent(Intent.ACTION_PICK, Uri.parse(s));
@@ -575,19 +602,19 @@ public class PrintSaveImage extends LlFragment {
 		int rotation = display.getRotation();
 		int tempOrientation = activity.getResources().getConfiguration().orientation;
 		switch (tempOrientation) {
-		case Configuration.ORIENTATION_LANDSCAPE:
-			if (rotation == Surface.ROTATION_0
-					|| rotation == Surface.ROTATION_90)
-				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			else
-				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-			break;
-		case Configuration.ORIENTATION_PORTRAIT:
-			if (rotation == Surface.ROTATION_0
-					|| rotation == Surface.ROTATION_270)
-				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			else
-				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+			case Configuration.ORIENTATION_LANDSCAPE:
+				if (rotation == Surface.ROTATION_0
+						|| rotation == Surface.ROTATION_90)
+					activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				else
+					activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+				break;
+			case Configuration.ORIENTATION_PORTRAIT:
+				if (rotation == Surface.ROTATION_0
+						|| rotation == Surface.ROTATION_270)
+					activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				else
+					activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
 		}
 //		activity.setRequestedOrientation(orientation);
 	}

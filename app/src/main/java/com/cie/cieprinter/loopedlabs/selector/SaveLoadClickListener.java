@@ -1,4 +1,4 @@
-package com.cie.cieprinter.selector;
+package com.cie.cieprinter.loopedlabs.selector;
 
 import android.app.AlertDialog;
 import android.content.Context;

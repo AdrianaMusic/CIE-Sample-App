@@ -46,7 +46,7 @@
     <string name="choose_gallery">Choose pic from Storage</string>
     <string name="choose_camera">Capture pic from Camera</string>
     <string name="as_is_preview">Photo Preview</string>
-    <string name="logo_size">Logo size: </string>
+    <string name="logo_size">Image size: </string>
     <string name="empty"></string>
     <string name="printer_preview">Print Preview</string>
     <string name="set_logo">print direct</string>

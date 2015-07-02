@@ -1,4 +1,4 @@
-package com.cie.cieprinter.selector;
+package com.cie.cieprinter.loopedlabs.selector;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,7 +24,7 @@ public class FileSelectorActivity extends Activity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main1);
+        setContentView(R.layout.file_selecter_main);
 
         mLoadButton = (Button) findViewById(R.id.button_load);
         mSaveButton = (Button) findViewById(R.id.button_save);

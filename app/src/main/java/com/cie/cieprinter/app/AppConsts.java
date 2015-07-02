@@ -3,7 +3,8 @@ package com.cie.cieprinter.app;
 public class AppConsts {
 
 
-    public static final int NO_PRINT_TASK = 0;
+    public static final int PRINT_IN_BATCH = 1;
+    public static final int PRINT_DIRECT = 0;
 
     public static final int PRINT = 400;
     public static final int PRINTS = 401;
