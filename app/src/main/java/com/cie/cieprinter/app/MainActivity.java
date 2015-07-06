@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
 
         viewPager.setAdapter(pAdapter);
         actionBar.setHomeButtonEnabled(false);
-        actionBar.setNavigationMode(getSupportActionBar().NAVIGATION_MODE_TABS);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // Adding Tabs
         for (String tab_name : tabs) {
@@ -77,51 +78,36 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
             public void onPageScrollStateChanged(int arg0) {
             }
         });
-        DebugLog.setDebugMode(BuildConfig.DEBUG);
 
-        DebugLog.logTrace();
+        //uncomment when you want to debug.
+        //DebugLog.setDebugMode(BuildConfig.DEBUG);
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mAdapter == null) {
             Toast.makeText(this, R.string.bt_not_supported, Toast.LENGTH_SHORT).show();
             finish();
         }
-
     }
-
-    /**
-     * Called when system activity to enable bluetooth exits, giving you the
-     * requestCode you started it with, the resultCode it returned, and any
-     * additional data from it. The resultCode will be RESULT_CANCELED if the
-     * activity explicitly returned that, didn't return any result, or crashed
-     * during its operation.
-     */
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        DebugLog.logTrace();
         super.onActivityResult(requestCode, resultCode, data);
         mBtp.onActivityResult(requestCode, resultCode,this);
     }
     @Override
     protected void onResume() {
-        DebugLog.logTrace();
         mBtp.onActivityResume();
-//        iPrinterTask = AppConsts.NO_PRINT_TASK;
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        DebugLog.logTrace();
         mBtp.onActivityPause();
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-        DebugLog.logTrace();
-        mBtp.onActivityDestroy();
+       mBtp.onActivityDestroy();
         super.onDestroy();
     }
 
@@ -187,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
     class PrintSrvMsgHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            DebugLog.logTrace();
             switch (msg.what) {
                 case STATUS_MSG:
                     switch (msg.arg1) {
@@ -256,17 +241,14 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
         }
     }
     public void setStatusMsg(String msg) {
-        DebugLog.logTrace(msg);
-        statusMsg.setText(msg);
+       statusMsg.setText(msg);
     }
     private void setStatusMsg(int resId) {
-        DebugLog.logTrace();
-//        tvMsg.setText(getResources().getString(resId));
+        statusMsg.setText(getResources().getString(resId));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        DebugLog.logTrace();
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.print_manager, menu);
         return true;
@@ -274,8 +256,6 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        DebugLog.logTrace();
-
         int id = item.getItemId();
 
         switch (id) {

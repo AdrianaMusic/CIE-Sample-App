@@ -2,13 +2,9 @@ package com.cie.cieprinter.app;
 
 
 import android.annotation.TargetApi;
-import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Messenger;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,22 +22,18 @@ import com.cie.cieprinter.R;
 import com.cie.cieprinter.bill.Bill;
 import com.cie.cieprinter.loopedlabs.LlFragment;
 
-import static com.cie.btp.BtpConsts.BTP_DEVICE_MAC_ID;
-
 
 public class PrinterDemo extends LlFragment {
     private static android.app.FragmentManager fragMgr;
-    private Fragment mContent = null;
+
     public static ToggleButton tbPrinter;
-    private Messenger mService = null;
     private BluetoothAdapter mAdapter;
-    private String mBtpDevice = "";
-    private SharedPreferences mSp;
     private EditText etQRcode;
     private static final int BARCODE_WIDTH = 384;
     private static final int BARCODE_HEIGHT = 100;
 
     private CieBluetoothPrinter mBtp = CieBluetoothPrinter.INSTANCE;
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -128,11 +120,8 @@ public class PrinterDemo extends LlFragment {
             Toast.makeText(getActivity(), R.string.bt_not_supported, Toast.LENGTH_SHORT).show();
             getActivity().finish();
         }
-        mSp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mBtpDevice = mSp.getString(BTP_DEVICE_MAC_ID, "");
         mListener.onAppSignal(AppConsts.UPDATE_UIPREF_PRINTER);
      return v;
-
     }
 
     private void performPrinterTask() {
@@ -183,5 +172,4 @@ public class PrinterDemo extends LlFragment {
         //print all commands
         mBtp.batchPrint();
     }
-
 }

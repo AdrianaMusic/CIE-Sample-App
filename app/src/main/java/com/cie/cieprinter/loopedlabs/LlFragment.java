@@ -5,10 +5,6 @@ import android.support.v4.app.Fragment;
 
 import com.cie.btp.DebugLog;
 
-
-/**
- * Created by Natarajan on 2/12/2015.
- */
 public class LlFragment extends Fragment {
     protected FragmentMessageListener mListener;
 
