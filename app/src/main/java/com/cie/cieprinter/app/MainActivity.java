@@ -131,8 +131,6 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
     @Override
     public void onAppSignal(int iAppSignal) {
         switch (iAppSignal) {
-            case AppConsts.STATUS:
-                break;
             case AppConsts.START_PRINT_SERVICE:
                 mPrinter.startPrintService();
                 mPrinter.connectToPrinter();
@@ -142,11 +140,9 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
                 break;
             case AppConsts.CLEAR_PREFERRED_PRINTER:
                 mPrinter.clearPreferredPrinter();
-                try {
+                if (PrinterDemo.tbPrinter != null) {
                     PrinterDemo.tbPrinter.setText("OFF");
                     PrinterDemo.tbPrinter.setChecked(false);
-                }catch (NullPointerException n){
-                    DebugLog.logTrace("Fragment creating");
                 }
                 break;
             case AppConsts.CONNECT_TO_DEVICE:

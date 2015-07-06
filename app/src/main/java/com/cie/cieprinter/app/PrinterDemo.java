@@ -24,7 +24,7 @@ import com.cie.cieprinter.loopedlabs.LlFragment;
 
 public class PrinterDemo extends LlFragment {
 
-    public static ToggleButton tbPrinter;
+    public static ToggleButton tbPrinter = null;
     private EditText etQRcode;
     private static final int BARCODE_WIDTH = 384;
     private static final int BARCODE_HEIGHT = 100;
