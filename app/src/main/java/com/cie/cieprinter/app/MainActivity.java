@@ -1,11 +1,9 @@
 package com.cie.cieprinter.app;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -31,31 +29,28 @@ import static com.cie.btp.BtpConsts.STATUS_MSG;
 
 public class MainActivity extends AppCompatActivity implements  TabListener,FragmentMessageListener {
 
-    private BluetoothAdapter mAdapter;
     private TextView statusMsg;
     private ViewPager viewPager;
-    private TabsPagerAdapter pAdapter;
     private android.support.v7.app.ActionBar actionBar;
-    public static CieBluetoothPrinter mBtp = CieBluetoothPrinter.INSTANCE;
+    public static CieBluetoothPrinter mPrinter = CieBluetoothPrinter.INSTANCE;
     // Tab titles
     private String[] tabs = {"Printer Demo","Image Print", };
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
-        mBtp.setDebugService(true);
+        mPrinter.setDebugService(true);
         try {
-            mBtp.initService(MainActivity.this, mMessenger);
+            mPrinter.initService(MainActivity.this, mMessenger);
         } catch (Exception e) {
             e.printStackTrace();
         }
         statusMsg = (TextView) findViewById(R.id.status_msg);
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getSupportActionBar();
-        pAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        TabsPagerAdapter pAdapter = new TabsPagerAdapter(getSupportFragmentManager());
 
         viewPager.setAdapter(pAdapter);
         actionBar.setHomeButtonEnabled(false);
@@ -71,9 +66,11 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
             }
+
             @Override
             public void onPageScrolled(int arg0, float arg1, int arg2) {
             }
+
             @Override
             public void onPageScrollStateChanged(int arg0) {
             }
@@ -81,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
 
         //uncomment when you want to debug.
         //DebugLog.setDebugMode(BuildConfig.DEBUG);
-        mAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mAdapter == null) {
             Toast.makeText(this, R.string.bt_not_supported, Toast.LENGTH_SHORT).show();
             finish();
@@ -91,23 +88,23 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mBtp.onActivityResult(requestCode, resultCode,this);
+        mPrinter.onActivityResult(requestCode, resultCode, this);
     }
     @Override
     protected void onResume() {
-        mBtp.onActivityResume();
+        mPrinter.onActivityResume();
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        mBtp.onActivityPause();
+        mPrinter.onActivityPause();
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-       mBtp.onActivityDestroy();
+       mPrinter.onActivityDestroy();
         super.onDestroy();
     }
 
@@ -137,14 +134,14 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
             case AppConsts.STATUS:
                 break;
             case AppConsts.START_PRINT_SERVICE:
-                mBtp.startPrintService();
-                mBtp.connectToPrinter();
+                mPrinter.startPrintService();
+                mPrinter.connectToPrinter();
                 break;
             case AppConsts.DISCONNECT_FROM_PRINTER:
-                mBtp.disconnectFromDevice();
+                mPrinter.disconnectFromDevice();
                 break;
             case AppConsts.CLEAR_PREFERRED_PRINTER:
-                mBtp.clearPreferredPrinter();
+                mPrinter.clearPreferredPrinter();
                 try {
                     PrinterDemo.tbPrinter.setText("OFF");
                     PrinterDemo.tbPrinter.setChecked(false);
@@ -153,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
                 }
                 break;
             case AppConsts.CONNECT_TO_DEVICE:
-                mBtp.connectToPrinter();
+                mPrinter.connectToPrinter();
                 break;
         }
     }
@@ -178,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
                     switch (msg.arg1) {
                         case ACTIVITY_BOUND_TO_SERVICE:
                             setStatusMsg(R.string.starting_print_service);
-                            mBtp.connectToPrinter();
+                            mPrinter.connectToPrinter();
                             break;
 
                     }
@@ -213,8 +210,8 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
                             }
                             break;
                         case CieBluetoothPrinter.START_PRINT_SERVICE:
-                            mBtp.startPrintService();
-                            mBtp.connectToPrinter();
+                            mPrinter.startPrintService();
+                            mPrinter.connectToPrinter();
                             break;
                     }
                     break;

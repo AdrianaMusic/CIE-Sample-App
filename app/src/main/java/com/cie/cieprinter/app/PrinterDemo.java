@@ -17,31 +17,27 @@ import android.widget.ToggleButton;
 import com.cie.btp.Barcode;
 import com.cie.btp.BtpPrintService;
 import com.cie.btp.CieBluetoothPrinter;
-import com.cie.btp.DebugLog;
 import com.cie.cieprinter.R;
 import com.cie.cieprinter.bill.Bill;
 import com.cie.cieprinter.loopedlabs.LlFragment;
 
 
 public class PrinterDemo extends LlFragment {
-    private static android.app.FragmentManager fragMgr;
 
     public static ToggleButton tbPrinter;
-    private BluetoothAdapter mAdapter;
     private EditText etQRcode;
     private static final int BARCODE_WIDTH = 384;
     private static final int BARCODE_HEIGHT = 100;
 
     private CieBluetoothPrinter mBtp = CieBluetoothPrinter.INSTANCE;
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v= inflater.inflate(R.layout.printer_status, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        Bill b = new Bill();
+
         tbPrinter = (ToggleButton) v.findViewById(R.id.tbPrinter);
         etQRcode = (EditText) v.findViewById(R.id.et_qrcpde);
         Button btnClearPrefPrinter = (Button) v.findViewById(R.id.btnClearPrefPrinter);
@@ -64,7 +60,6 @@ public class PrinterDemo extends LlFragment {
         barcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DebugLog.logTrace("clicked");
                 String txt = etQRcode.getText().toString();
 
                 try {
@@ -91,7 +86,7 @@ public class PrinterDemo extends LlFragment {
         btnTestBill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               performPrinterTask();
+                performPrinterTask();
             }
         });
 
@@ -115,7 +110,7 @@ public class PrinterDemo extends LlFragment {
                                          }
                                      }
         );
-        mAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mAdapter == null) {
             Toast.makeText(getActivity(), R.string.bt_not_supported, Toast.LENGTH_SHORT).show();
             getActivity().finish();

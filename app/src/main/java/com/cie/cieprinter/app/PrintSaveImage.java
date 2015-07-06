@@ -101,7 +101,7 @@ public class PrintSaveImage extends LlFragment {
                         Toast.makeText(getActivity(), "Image saved on index " + indexNumber,
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getActivity(), MainActivity.mBtp.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), MainActivity.mPrinter.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (NumberFormatException e) {
@@ -137,7 +137,7 @@ public class PrintSaveImage extends LlFragment {
                     if (r) {
                         Toast.makeText(getActivity(), "Image Printed", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getActivity(), MainActivity.mBtp.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), MainActivity.mPrinter.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } catch (NullPointerException e) {
                     DebugLog.logException(e);
@@ -146,11 +146,6 @@ public class PrintSaveImage extends LlFragment {
         });
         return view;
     }
-
-    // /////////////////////////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    // /////////////////////////////////////////////////////////////////////////////////////////////
-    private Button btnCapturePicture, btnFromGallery;
 
     private ImageView imgPreviewAsIs, imgLogoPreview;
 
@@ -170,13 +165,9 @@ public class PrintSaveImage extends LlFragment {
     private int ivLogoPreviewHeight = 0;
     private int ivlogoPreviewWidth = 0;
 
-    private int iLogoWidth = 0;
-    private int iLogoHeight = 0;
-
     private TextView tvAsIsSize, tvPrintSize, tvlogoSize;
 
     private SeekBar seekBar;
-    private CheckBox cbInvertBitmap;
 
     private boolean bInvertBitmap = false;
     private boolean bIgnoreAlpha = true;
@@ -218,14 +209,8 @@ public class PrintSaveImage extends LlFragment {
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
             fileUri = Uri.parse(picturePath);
-            if (fileUri != null) {
                 previewCapturedImage();
                 previewImage(0);
-            } else {
-                Toast.makeText(getActivity(),
-                        "media handler not available, choose another image",
-                        Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -290,10 +275,7 @@ public class PrintSaveImage extends LlFragment {
         orgImgHeight = options.outHeight;
         orgImgWidth = options.outWidth;
 
-        if ((orgImgHeight < MIN_IMG_SIZE) || (orgImgWidth < MIN_IMG_SIZE)) {
-            return false;
-        }
-        return true;
+        return !((orgImgHeight < MIN_IMG_SIZE) || (orgImgWidth < MIN_IMG_SIZE));
     }
 
     /**
@@ -386,8 +368,11 @@ public class PrintSaveImage extends LlFragment {
     private void previewImage(int threshold) {
         try {
             Bitmap b = CieImageFactory.LoadImage(fileUri.getPath());
-            iLogoWidth = b.getWidth();
-            iLogoHeight = b.getHeight();
+            if (b == null) {
+                return;
+            }
+            int iLogoWidth = b.getWidth();
+            int iLogoHeight = b.getHeight();
             DebugLog.logTrace("invert  " + bInvertBitmap);
 
             Bitmap bImg = CieImageFactory.BinarizeImage(b, bIgnoreAlpha,
@@ -445,7 +430,7 @@ public class PrintSaveImage extends LlFragment {
                 return true;
             }
         });
-        btnCapturePicture = (Button) v.findViewById(R.id.btnCapturePicture);
+        Button btnCapturePicture = (Button) v.findViewById(R.id.btnCapturePicture);
         txtView = (TextView) v.findViewById(R.id.textView);
         btnCapturePicture.setOnClickListener(new OnClickListener() {
 
@@ -456,7 +441,7 @@ public class PrintSaveImage extends LlFragment {
             }
         });
 
-        btnFromGallery = (Button) v.findViewById(R.id.btnFromGallery);
+        Button btnFromGallery = (Button) v.findViewById(R.id.btnFromGallery);
         btnFromGallery.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -470,7 +455,7 @@ public class PrintSaveImage extends LlFragment {
         tvPrintSize = (TextView) v.findViewById(R.id.tvPrintSize);
         tvlogoSize = (TextView) v.findViewById(R.id.tvlogoSize);
 
-        cbInvertBitmap = (CheckBox) v.findViewById(R.id.cbInvertBitmap);
+        CheckBox cbInvertBitmap = (CheckBox) v.findViewById(R.id.cbInvertBitmap);
         cbInvertBitmap.setChecked(false);
         bInvertBitmap = false;
         cbInvertBitmap
@@ -505,7 +490,6 @@ public class PrintSaveImage extends LlFragment {
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
