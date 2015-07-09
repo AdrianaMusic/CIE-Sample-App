@@ -41,12 +41,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
-        mPrinter.setDebugService(true);
-        try {
-            mPrinter.initService(MainActivity.this, mMessenger);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
         statusMsg = (TextView) findViewById(R.id.status_msg);
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getSupportActionBar();
@@ -82,6 +77,14 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
         if (mAdapter == null) {
             Toast.makeText(this, R.string.bt_not_supported, Toast.LENGTH_SHORT).show();
             finish();
+        }
+
+        //un comment the line below to debug the print service
+        //mPrinter.setDebugService(BuildConfig.DEBUG);
+        try {
+            mPrinter.initService(MainActivity.this, mMessenger);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -173,17 +176,14 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
                             setStatusMsg(R.string.starting_print_service);
                             mPrinter.connectToPrinter();
                             break;
-
                     }
                     break;
-                // Direct from the Bluetooth Printer
                 case CieBluetoothPrinter.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case CieBluetoothPrinter.STATE_CONNECTED:
                             setStatusMsg(title_connected_to + mConnectedDeviceName);
                             PrinterDemo.tbPrinter.setText("ON");
                             PrinterDemo.tbPrinter.setChecked(true);
-
                             break;
                         case CieBluetoothPrinter.STATE_CONNECTING:
                             setStatusMsg(title_connecting);
