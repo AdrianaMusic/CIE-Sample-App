@@ -1,9 +1,11 @@
 package com.cie.cieprinter.app;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,9 +25,6 @@ import com.cie.cieprinter.BuildConfig;
 import com.cie.cieprinter.R;
 import com.cie.cieprinter.loopedlabs.FragmentMessageListener;
 
-import static com.cie.btp.BtpConsts.ACTIVITY_BOUND_TO_SERVICE;
-import static com.cie.btp.BtpConsts.STATUS_MSG;
-
 
 public class MainActivity extends AppCompatActivity implements  TabListener,FragmentMessageListener {
 
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
     // Tab titles
     private String[] tabs = {"Printer Demo","Image Print", };
 
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -170,14 +170,6 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case STATUS_MSG:
-                    switch (msg.arg1) {
-                        case ACTIVITY_BOUND_TO_SERVICE:
-                            setStatusMsg(R.string.starting_print_service);
-                            mPrinter.connectToPrinter();
-                            break;
-                    }
-                    break;
                 case CieBluetoothPrinter.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case CieBluetoothPrinter.STATE_CONNECTED:
@@ -235,9 +227,6 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
     }
     public void setStatusMsg(String msg) {
        statusMsg.setText(msg);
-    }
-    private void setStatusMsg(int resId) {
-        statusMsg.setText(getResources().getString(resId));
     }
 
     @Override
