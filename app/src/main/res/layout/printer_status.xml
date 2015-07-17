@@ -57,6 +57,37 @@
                 android:layout_weight="2"
                 android:text="@string/set_pref_printer" />
         </TableRow>
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="2"
+                android:text="2 Inch"
+                android:checked="true"
+                android:id="@+id/two_inch" />
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="2"
+                android:text="3 Inch"
+                android:id="@+id/three_inch" />
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="2"
+                android:text="4 Inch"
+                android:id="@+id/four_inch" />
+        </RadioGroup>
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

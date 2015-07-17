@@ -11,12 +11,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.cie.btp.Barcode;
 import com.cie.btp.BtpPrintService;
 import com.cie.btp.CieBluetoothPrinter;
+import com.cie.btp.PrinterWidth;
 import com.cie.cieprinter.R;
 import com.cie.cieprinter.bill.Bill;
 import com.cie.cieprinter.loopedlabs.LlFragment;
@@ -29,7 +31,7 @@ public class PrinterDemo extends LlFragment {
     private static final int BARCODE_WIDTH = 384;
     private static final int BARCODE_HEIGHT = 100;
 
-    private CieBluetoothPrinter mBtp = CieBluetoothPrinter.INSTANCE;
+    private CieBluetoothPrinter mPrinter = CieBluetoothPrinter.INSTANCE;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,6 +40,12 @@ public class PrinterDemo extends LlFragment {
         View v= inflater.inflate(R.layout.printer_status, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        RadioButton rbtwoInch = (RadioButton) v.findViewById(R.id.two_inch);
+        rbtwoInch.setOnClickListener(onRbClicked);
+        RadioButton rbthreeInch = (RadioButton) v.findViewById(R.id.three_inch);
+        rbthreeInch.setOnClickListener(onRbClicked);
+        RadioButton rbfourInch = (RadioButton) v.findViewById(R.id.four_inch);
+        rbfourInch.setOnClickListener(onRbClicked);
         tbPrinter = (ToggleButton) v.findViewById(R.id.tbPrinter);
         etQRcode = (EditText) v.findViewById(R.id.et_qrcpde);
         Button btnClearPrefPrinter = (Button) v.findViewById(R.id.btnClearPrefPrinter);
@@ -53,7 +61,7 @@ public class PrinterDemo extends LlFragment {
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
             public void onClick(View v) {
-                mBtp.showDeviceList(getActivity());
+                mPrinter.showDeviceList(getActivity());
             }
         });
         Button barcode = (Button) v.findViewById(R.id.barcodePrint);
@@ -65,7 +73,7 @@ public class PrinterDemo extends LlFragment {
                 try {
                     int d = Integer.parseInt(txt);
                     String data = String.valueOf(d);
-                    mBtp.printBarcode(data, Barcode.CODE_128, BARCODE_WIDTH, BARCODE_HEIGHT);
+                    mPrinter.printBarcode(data, Barcode.CODE_128, BARCODE_WIDTH, BARCODE_HEIGHT);
                 }catch (NumberFormatException nfe){
                     Toast.makeText(getActivity(), "Enter Numeric Number to print barcode",
                             Toast.LENGTH_SHORT).show();
@@ -79,7 +87,7 @@ public class PrinterDemo extends LlFragment {
             @Override
             public void onClick(View v) {
                     String data = etQRcode.getText().toString();
-                mBtp.printQRcode(data);
+                mPrinter.printQRcode(data);
             }
         });
         Button btnTestBill = (Button) v.findViewById(R.id.print_bill);
@@ -116,18 +124,56 @@ public class PrinterDemo extends LlFragment {
             getActivity().finish();
         }
         mListener.onAppSignal(AppConsts.UPDATE_UIPREF_PRINTER);
+
      return v;
     }
+    public View.OnClickListener onRbClicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Is the button now checked?
+            boolean checked = ((RadioButton) v).isChecked();
 
+            // Check which radio button was clicked
+            switch (v.getId()) {
+                case R.id.two_inch:
+                    if (checked) {
+                        boolean r= mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_48MM);
+                        if(r){
+                            Toast.makeText(getActivity(), "Two Inch Printer Selected",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    break;
+                case R.id.three_inch:
+                    if (checked) {
+                        boolean r = mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_72MM);
+                        if(r){
+                            Toast.makeText(getActivity(), "Three Inch Printer Selected",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    break;
+                case R.id.four_inch:
+                    if (checked) {
+                        boolean r = mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_104MM);
+                        if(r){
+                            Toast.makeText(getActivity(), "Four Inch Printer Selected",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    break;
+            }
+        }
+    };
     private void performPrinterTask() {
 
-        mBtp.setPrintMode(AppConsts.PRINT_IN_BATCH);
+        mPrinter.setPrintMode(AppConsts.PRINT_IN_BATCH);
 
-        mBtp.setHighIntensity();
-        mBtp.setAlignmentCenter();
-        mBtp.printLineFeed("MY COMPANY BILL\n");
-        mBtp.printLineFeed("~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        mBtp.printLineFeed();
+        mPrinter.setHighIntensity();
+        mPrinter.setAlignmentCenter();
+        mPrinter.printLineFeed("MY COMPANY BILL\n");
+        mPrinter.printLineFeed("~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        mPrinter.printLineFeed();
         // Bill Header End
 
         // Bill Details Start
@@ -135,36 +181,36 @@ public class PrinterDemo extends LlFragment {
         b.setCustomerName("Test Cust");
         b.setCustomerOrderNo("0045");
 
-        mBtp.setAlignmentLeft();
-        mBtp.printTextLine("Customer Name     : " + b.getCustomerName() + "\n");
-        mBtp.printTextLine("Customer Order ID : " + b.getCustomerOrderNo() + "\n");
-        mBtp.printTextLine("------------------------------\n");
-        mBtp.printTextLine("  Item      Quantity     Price\n");
-        mBtp.printTextLine("------------------------------\n");
-        mBtp.printTextLine("  Item 1          1       1.00\n");
-        mBtp.printTextLine("  Bags           10    2220.00\n");
-        mBtp.printTextLine("  Next Item     999   99999.00\n");
-        mBtp.printLineFeed();
-        mBtp.printTextLine("------------------------------\n");
-        mBtp.printTextLine("  Total              107220.00\n");
-        mBtp.printTextLine("------------------------------\n");
-        mBtp.printLineFeed();
-        mBtp.printTextLine("    Thank you ! Visit Again   \n");
-        mBtp.printLineFeed();
-        mBtp.printTextLine("******************************\n");
-        mBtp.printLineFeed();
+        mPrinter.setAlignmentLeft();
+        mPrinter.printTextLine("Customer Name     : " + b.getCustomerName() + "\n");
+        mPrinter.printTextLine("Customer Order ID : " + b.getCustomerOrderNo() + "\n");
+        mPrinter.printTextLine("------------------------------\n");
+        mPrinter.printTextLine("  Item      Quantity     Price\n");
+        mPrinter.printTextLine("------------------------------\n");
+        mPrinter.printTextLine("  Item 1          1       1.00\n");
+        mPrinter.printTextLine("  Bags           10    2220.00\n");
+        mPrinter.printTextLine("  Next Item     999   99999.00\n");
+        mPrinter.printLineFeed();
+        mPrinter.printTextLine("------------------------------\n");
+        mPrinter.printTextLine("  Total              107220.00\n");
+        mPrinter.printTextLine("------------------------------\n");
+        mPrinter.printLineFeed();
+        mPrinter.printTextLine("    Thank you ! Visit Again   \n");
+        mPrinter.printLineFeed();
+        mPrinter.printTextLine("******************************\n");
+        mPrinter.printLineFeed();
 
-        mBtp.printTextLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        mBtp.printLineFeed();
+        mPrinter.printTextLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        mPrinter.printLineFeed();
 
-        mBtp.setAlignmentCenter();
+        mPrinter.setAlignmentCenter();
 
         //Clearance for Paper tear
-        mBtp.printLineFeed();
-        mBtp.printLineFeed();
-        mBtp.resetPrinter();
+        mPrinter.printLineFeed();
+        mPrinter.printLineFeed();
+        mPrinter.resetPrinter();
 
         //print all commands
-        mBtp.batchPrint();
+        mPrinter.batchPrint();
     }
 }

@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
                 AlertDialog.Builder aboutBuilder = new AlertDialog.Builder(this);
                 aboutBuilder.setTitle(R.string.app_name);
                 aboutBuilder
-                        .setMessage("App Version : " + BuildConfig.VERSION_CODE + "\nCoiNel Technology Solution LLP\nhttp://www.coineltech.com")
+                        .setMessage("App Version : " + BuildConfig.VERSION_NAME + "\nCoiNel Technology Solution LLP\nhttp://www.coineltech.com")
                         .setCancelable(true)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
