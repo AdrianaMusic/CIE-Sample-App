@@ -129,6 +129,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="10dp">
+            <Button
+                android:id="@+id/print_language"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="2"
+                android:text="Print Language" />
 
             <Button
                 android:id="@+id/print_bill"

@@ -3,8 +3,11 @@ package com.cie.cieprinter.app;
 
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Layout;
+import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.cie.btp.Barcode;
+import com.cie.btp.BtpConsts;
 import com.cie.btp.BtpPrintService;
 import com.cie.btp.CieBluetoothPrinter;
 import com.cie.btp.PrinterWidth;
@@ -30,6 +34,8 @@ public class PrinterDemo extends LlFragment {
     private EditText etQRcode;
     private static final int BARCODE_WIDTH = 384;
     private static final int BARCODE_HEIGHT = 100;
+    private TextPaint mDefaultTextPaint;
+    private static int FONT_SIZE = 32;
 
     private CieBluetoothPrinter mPrinter = CieBluetoothPrinter.INSTANCE;
 
@@ -74,7 +80,7 @@ public class PrinterDemo extends LlFragment {
                     int d = Integer.parseInt(txt);
                     String data = String.valueOf(d);
                     mPrinter.printBarcode(data, Barcode.CODE_128, BARCODE_WIDTH, BARCODE_HEIGHT);
-                }catch (NumberFormatException nfe){
+                } catch (NumberFormatException nfe) {
                     Toast.makeText(getActivity(), "Enter Numeric Number to print barcode",
                             Toast.LENGTH_SHORT).show();
                 }
@@ -86,7 +92,7 @@ public class PrinterDemo extends LlFragment {
         btnQRCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    String data = etQRcode.getText().toString();
+                String data = etQRcode.getText().toString();
                 mPrinter.printQRcode(data);
             }
         });
@@ -95,6 +101,21 @@ public class PrinterDemo extends LlFragment {
             @Override
             public void onClick(View v) {
                 performPrinterTask();
+            }
+        });
+        Button btnLanguagePrint = (Button) v.findViewById(R.id.print_language);
+        btnLanguagePrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String txt = "कम्प्यूटर, मूल रूप से, नंबरों से सम्बंध रखते हैं। ये प्रत्येक अक्षर और वर्ण के लिए एक नंबर निर्धारित करके अक्षर और वर्ण " +
+                        "संग्रहित करते हैं। यूनिकोड का आविष्कार होने से पहले, ऐसे नंबर देने के लिए सैंकडों विभिन्न संकेत लिपि प्रणालियां थीं। किसी एक संकेत " +
+                        "लिपि में पर्याप्त अक्षर नहीं हो सकते हैं : उदाहरण के लिए, यूरोपिय संघ को अकेले ही, अपनी सभी भाषाऒं को कवर करने के लिए अन" +
+                        "ेक विभिन्न संकेत लिपियों की आवश्यकता होती है। अंग्रेजी जैसी भाषा के लिए भी, सभी अक्षरों, विरामचिन्हों और सामान्य प्रयोग के तक" +
+                        "नीकी प्रतीकों हेतु एक ही संकेत लिपि पर्याप्त नहीं थी।";
+                mDefaultTextPaint = new TextPaint();
+                mDefaultTextPaint.setColor(Color.BLACK);
+                mDefaultTextPaint.setTextSize(FONT_SIZE);
+                mPrinter.printUnicodeText(txt, Layout.Alignment.ALIGN_NORMAL, mDefaultTextPaint);
             }
         });
 
@@ -167,7 +188,7 @@ public class PrinterDemo extends LlFragment {
     };
     private void performPrinterTask() {
 
-        mPrinter.setPrintMode(AppConsts.PRINT_IN_BATCH);
+        mPrinter.setPrintMode(BtpConsts.PRINT_IN_BATCH);
 
         mPrinter.setHighIntensity();
         mPrinter.setAlignmentCenter();
