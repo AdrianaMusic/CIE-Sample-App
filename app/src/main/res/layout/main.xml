@@ -14,14 +14,32 @@
     >
 </android.support.v4.view.ViewPager>
 
-    <TextView
-        android:layout_width="match_parent"
+    <TableRow
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="2dp"
-        android:text="Status"
-        android:lines="1"
-        android:id="@+id/status_msg"
-         />
+        android:gravity="center|fill_horizontal|start"
+        android:orientation="horizontal"
+        android:paddingBottom="2dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        >
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_weight="10"
+            android:layout_marginTop="2dp"
+            android:gravity="bottom"
+            android:text="Status"
+            android:id="@+id/status_msg"
+            />
+
+        <ToggleButton
+            android:id="@+id/tbPrinter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:checked="false" />
+    </TableRow>
 </LinearLayout>

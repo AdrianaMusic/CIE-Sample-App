@@ -2,7 +2,6 @@ package com.cie.cieprinter.app;
 
 
 import android.annotation.TargetApi;
-import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,11 +15,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.cie.btp.Barcode;
 import com.cie.btp.BtpConsts;
-import com.cie.btp.BtpPrintService;
 import com.cie.btp.CieBluetoothPrinter;
 import com.cie.btp.PrinterWidth;
 import com.cie.cieprinter.R;
@@ -30,7 +27,7 @@ import com.cie.cieprinter.loopedlabs.LlFragment;
 
 public class PrinterDemo extends LlFragment {
 
-    public static ToggleButton tbPrinter = null;
+
     private EditText etQRcode;
     private static final int BARCODE_WIDTH = 384;
     private static final int BARCODE_HEIGHT = 100;
@@ -52,7 +49,6 @@ public class PrinterDemo extends LlFragment {
         rbthreeInch.setOnClickListener(onRbClicked);
         RadioButton rbfourInch = (RadioButton) v.findViewById(R.id.four_inch);
         rbfourInch.setOnClickListener(onRbClicked);
-        tbPrinter = (ToggleButton) v.findViewById(R.id.tbPrinter);
         etQRcode = (EditText) v.findViewById(R.id.et_qrcpde);
         Button btnClearPrefPrinter = (Button) v.findViewById(R.id.btnClearPrefPrinter);
         btnClearPrefPrinter.setOnClickListener(new View.OnClickListener() {
@@ -118,33 +114,13 @@ public class PrinterDemo extends LlFragment {
                 mPrinter.printUnicodeText(txt, Layout.Alignment.ALIGN_NORMAL, mDefaultTextPaint);
             }
         });
-
-        mListener.onAppSignal(AppConsts.START_PRINT_SERVICE);
-
-        tbPrinter.setOnClickListener(new View.OnClickListener() {
-                                         @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-                                         @Override
-                                         public void onClick(View v) {
-                                                 if (!BtpPrintService.isRunning()) {
-                                                     Toast.makeText(getActivity(), "Print Service is not running please Restart app again",
-                                                             Toast.LENGTH_SHORT).show();
-                                                     tbPrinter.setChecked(false);
-                                                 } else {
-                                                     mListener.onAppSignal(AppConsts.CONNECT_TO_DEVICE, true);
-                                                 }
-                                                 if(!tbPrinter.isChecked()){
-
-                                                     mListener.onAppSignal(AppConsts.DISCONNECT_FROM_PRINTER);
-                                                 }
-                                         }
-                                     }
-        );
+ /*
         BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mAdapter == null) {
             Toast.makeText(getActivity(), R.string.bt_not_supported, Toast.LENGTH_SHORT).show();
             getActivity().finish();
         }
-        mListener.onAppSignal(AppConsts.UPDATE_UIPREF_PRINTER);
+        mListener.onAppSignal(AppConsts.UPDATE_UIPREF_PRINTER);*/
 
      return v;
     }
@@ -189,11 +165,11 @@ public class PrinterDemo extends LlFragment {
     private void performPrinterTask() {
 
         mPrinter.setPrintMode(BtpConsts.PRINT_IN_BATCH);
-
+        mPrinter.resetPrinter();
         mPrinter.setHighIntensity();
         mPrinter.setAlignmentCenter();
-        mPrinter.printLineFeed("MY COMPANY BILL\n");
-        mPrinter.printLineFeed("~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        mPrinter.printTextLine("MY COMPANY BILL\n");
+        mPrinter.printTextLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         mPrinter.printLineFeed();
         // Bill Header End
 

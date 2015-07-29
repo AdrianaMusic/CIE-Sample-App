@@ -16,8 +16,10 @@ import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.cie.btp.CieBluetoothPrinter;
 import com.cie.btp.DebugLog;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
 
     private TextView statusMsg;
     private ViewPager viewPager;
+    private ToggleButton tbPrinter;
     private android.support.v7.app.ActionBar actionBar;
     public static CieBluetoothPrinter mPrinter = CieBluetoothPrinter.INSTANCE;
     // Tab titles
@@ -43,6 +46,18 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
         setContentView(R.layout.main);
 
         statusMsg = (TextView) findViewById(R.id.status_msg);
+        tbPrinter = (ToggleButton) findViewById(R.id.tbPrinter);
+        tbPrinter.setOnClickListener(new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View v) {
+                                             if (tbPrinter.isChecked()) {
+                                                 mPrinter.connectToPrinter();
+                                             } else {
+                                                 mPrinter.disconnectFromPrinter();
+                                             }
+                                         }
+                                     }
+        );
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getSupportActionBar();
         TabsPagerAdapter pAdapter = new TabsPagerAdapter(getSupportFragmentManager());
@@ -134,23 +149,12 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
     @Override
     public void onAppSignal(int iAppSignal) {
         switch (iAppSignal) {
-            case AppConsts.START_PRINT_SERVICE:
-                mPrinter.startPrintService();
-                mPrinter.connectToPrinter();
-                break;
-            case AppConsts.DISCONNECT_FROM_PRINTER:
-                mPrinter.disconnectFromDevice();
-                break;
             case AppConsts.CLEAR_PREFERRED_PRINTER:
                 mPrinter.clearPreferredPrinter();
-                if (PrinterDemo.tbPrinter != null) {
-                    PrinterDemo.tbPrinter.setText("OFF");
-                    PrinterDemo.tbPrinter.setChecked(false);
-                }
+                   tbPrinter.setText("OFF");
+                    tbPrinter.setChecked(false);
                 break;
-            case AppConsts.CONNECT_TO_DEVICE:
-                mPrinter.connectToPrinter();
-                break;
+
         }
     }
 
@@ -174,14 +178,14 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
                     switch (msg.arg1) {
                         case CieBluetoothPrinter.STATE_CONNECTED:
                             setStatusMsg(title_connected_to + mConnectedDeviceName);
-                            PrinterDemo.tbPrinter.setText("ON");
-                            PrinterDemo.tbPrinter.setChecked(true);
+                            tbPrinter.setText("ON");
+                           tbPrinter.setChecked(true);
                             break;
                         case CieBluetoothPrinter.STATE_CONNECTING:
                             setStatusMsg(title_connecting);
                             try {
-                                PrinterDemo.tbPrinter.setText("...");
-                                PrinterDemo.tbPrinter.setChecked(false);
+                             tbPrinter.setText("...");
+                                tbPrinter.setChecked(false);
                             }catch (NullPointerException e){
                                 DebugLog.logTrace("Fragment creating");
                             }
@@ -191,15 +195,11 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
                         case CieBluetoothPrinter.STATE_NONE:
                             setStatusMsg(title_not_connected);
                             try {
-                                PrinterDemo.tbPrinter.setText("OFF");
-                                PrinterDemo.tbPrinter.setChecked(false);
+                                tbPrinter.setText("OFF");
+                                tbPrinter.setChecked(false);
                             }catch (NullPointerException n){
                                 DebugLog.logTrace("Fragment creating");
                             }
-                            break;
-                        case CieBluetoothPrinter.START_PRINT_SERVICE:
-                            mPrinter.startPrintService();
-                            mPrinter.connectToPrinter();
                             break;
                     }
                     break;
@@ -218,7 +218,9 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
                 case CieBluetoothPrinter.PRINTER_CONNECTION_CLOSED:
                     setStatusMsg("Printer Connection closed");
                     break;
-
+                case CieBluetoothPrinter.PRINTER_DISCONNECTED:
+                    setStatusMsg("Printer Connection failed");
+                    break;
                 default:
                     DebugLog.logTrace("Some un handled message : " + msg.what);
                     super.handleMessage(msg);

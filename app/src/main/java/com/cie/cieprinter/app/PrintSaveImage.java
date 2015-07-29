@@ -31,8 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cie.btp.CieBluetoothPrinter;
-import com.cie.btp.CieImageFactory;
 import com.cie.btp.DebugLog;
+import com.cie.btp.ImageFactory;
 import com.cie.cieprinter.R;
 import com.cie.cieprinter.loopedlabs.LlFragment;
 import com.cie.cieprinter.loopedlabs.selector.FileOperation;
@@ -367,7 +367,7 @@ public class PrintSaveImage extends LlFragment {
 
     private void previewImage(int threshold) {
         try {
-            Bitmap b = CieImageFactory.LoadImage(fileUri.getPath());
+            Bitmap b = ImageFactory.LoadImage(fileUri.getPath());
             if (b == null) {
                 return;
             }
@@ -375,11 +375,11 @@ public class PrintSaveImage extends LlFragment {
             int iLogoHeight = b.getHeight();
             DebugLog.logTrace("invert  " + bInvertBitmap);
 
-            Bitmap bImg = CieImageFactory.BinarizeImage(b, bIgnoreAlpha,
+            Bitmap bImg = ImageFactory.BinarizeImage(b, bIgnoreAlpha,
                     bInvertBitmap, threshold);
 
             if (threshold == 0) {
-                this.threshold = CieImageFactory.getThreshold();
+                this.threshold = ImageFactory.getThreshold();
                 seekBar.setProgress((this.threshold * 100) / 255);
             } else {
                 this.threshold = threshold;
