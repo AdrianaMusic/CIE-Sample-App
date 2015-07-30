@@ -30,7 +30,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cie.btp.CieBluetoothPrinter;
 import com.cie.btp.DebugLog;
 import com.cie.btp.ImageFactory;
 import com.cie.cieprinter.R;
@@ -49,7 +48,6 @@ public class PrintSaveImage extends LlFragment {
     private TextView txtView;
     final String[] mFileFilter = {".png", ".bmp", ".jpeg", ".jpg"};
     private String[] index = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-    public static CieBluetoothPrinter mBtp = CieBluetoothPrinter.INSTANCE;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -96,7 +94,7 @@ public class PrintSaveImage extends LlFragment {
                     }
                     Boolean Invert;
                     Invert = !bInvertBitmap;
-                    boolean r = mBtp.saveImage(fileUri.getPath(), Invert, threshold, indexNumber);
+                    boolean r = MainActivity.mPrinter.saveImage(fileUri.getPath(), Invert, threshold, indexNumber);
                     if (r) {
                         Toast.makeText(getActivity(), "Image saved on index " + indexNumber,
                                 Toast.LENGTH_SHORT).show();
@@ -117,7 +115,7 @@ public class PrintSaveImage extends LlFragment {
         printSavedImage.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBtp.printSavedImage(indexNumber);
+                MainActivity.mPrinter.printSavedImage(indexNumber);
             }
         });
         Button printDirect = (Button) view.findViewById(R.id.printDirect);
@@ -133,7 +131,7 @@ public class PrintSaveImage extends LlFragment {
                     Invert = !bInvertBitmap;
                     DebugLog.logTrace("A : " + bIgnoreAlpha + " I : " + Invert + " T : " + threshold);
 
-                    boolean r = mBtp.printDirect(fileUri.getPath(), Invert, threshold);
+                    boolean r = MainActivity.mPrinter.printDirect(fileUri.getPath(), Invert, threshold);
                     if (r) {
                         Toast.makeText(getActivity(), "Image Printed", Toast.LENGTH_SHORT).show();
                     } else {

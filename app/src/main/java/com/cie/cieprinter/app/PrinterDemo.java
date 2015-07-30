@@ -27,7 +27,7 @@ import com.cie.cieprinter.loopedlabs.LlFragment;
 
 public class PrinterDemo extends LlFragment {
 
-
+    private RadioButton rbTwoInch, rbThreeInch, rbFourInch;
     private EditText etQRcode;
     private static final int BARCODE_WIDTH = 384;
     private static final int BARCODE_HEIGHT = 100;
@@ -43,12 +43,13 @@ public class PrinterDemo extends LlFragment {
         View v= inflater.inflate(R.layout.printer_status, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        RadioButton rbtwoInch = (RadioButton) v.findViewById(R.id.two_inch);
-        rbtwoInch.setOnClickListener(onRbClicked);
-        RadioButton rbthreeInch = (RadioButton) v.findViewById(R.id.three_inch);
-        rbthreeInch.setOnClickListener(onRbClicked);
-        RadioButton rbfourInch = (RadioButton) v.findViewById(R.id.four_inch);
-        rbfourInch.setOnClickListener(onRbClicked);
+       rbTwoInch = (RadioButton) v.findViewById(R.id.two_inch);
+        rbTwoInch.setOnClickListener(onRbClicked);
+        rbThreeInch = (RadioButton) v.findViewById(R.id.three_inch);
+        rbThreeInch.setOnClickListener(onRbClicked);
+        rbFourInch = (RadioButton) v.findViewById(R.id.four_inch);
+        rbFourInch.setOnClickListener(onRbClicked);
+        printerSelection();
         etQRcode = (EditText) v.findViewById(R.id.et_qrcpde);
         Button btnClearPrefPrinter = (Button) v.findViewById(R.id.btnClearPrefPrinter);
         btnClearPrefPrinter.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +136,7 @@ public class PrinterDemo extends LlFragment {
                 case R.id.two_inch:
                     if (checked) {
                         boolean r= mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_48MM);
+                        MainActivity.mSp.edit().putInt("PRINTER_SELECTION",AppConsts.TWO_INCH).commit();
                         if(r){
                             Toast.makeText(getActivity(), "Two Inch Printer Selected",
                                     Toast.LENGTH_SHORT).show();
@@ -144,6 +146,7 @@ public class PrinterDemo extends LlFragment {
                 case R.id.three_inch:
                     if (checked) {
                         boolean r = mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_72MM);
+                        MainActivity.mSp.edit().putInt("PRINTER_SELECTION",AppConsts.THREE_INCH).commit();
                         if(r){
                             Toast.makeText(getActivity(), "Three Inch Printer Selected",
                                     Toast.LENGTH_SHORT).show();
@@ -153,6 +156,7 @@ public class PrinterDemo extends LlFragment {
                 case R.id.four_inch:
                     if (checked) {
                         boolean r = mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_104MM);
+                        MainActivity.mSp.edit().putInt("PRINTER_SELECTION",AppConsts.FOUR_INCH).commit();
                         if(r){
                             Toast.makeText(getActivity(), "Four Inch Printer Selected",
                                     Toast.LENGTH_SHORT).show();
@@ -209,5 +213,24 @@ public class PrinterDemo extends LlFragment {
 
         //print all commands
         mPrinter.batchPrint();
+    }
+    private void printerSelection(){
+        int printer_selection = MainActivity.mSp.getInt("PRINTER_SELECTION",0);
+        if (printer_selection==AppConsts.THREE_INCH) {
+            rbThreeInch.setChecked(true);
+            mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_72MM);
+        } if(printer_selection==AppConsts.FOUR_INCH) {
+            rbFourInch.setChecked(true);
+            mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_104MM);
+        }if (printer_selection==AppConsts.TWO_INCH){
+            rbTwoInch.setChecked(true);
+            mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_48MM);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        printerSelection();
+        super.onResume();
     }
 }

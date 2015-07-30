@@ -5,11 +5,13 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.TabListener;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
     private ViewPager viewPager;
     private ToggleButton tbPrinter;
     private android.support.v7.app.ActionBar actionBar;
+    public static SharedPreferences mSp;
     public static CieBluetoothPrinter mPrinter = CieBluetoothPrinter.INSTANCE;
     // Tab titles
     private String[] tabs = {"Printer Demo","Image Print", };
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
-
+        mSp = PreferenceManager.getDefaultSharedPreferences(this);
         statusMsg = (TextView) findViewById(R.id.status_msg);
         tbPrinter = (ToggleButton) findViewById(R.id.tbPrinter);
         tbPrinter.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
         mPrinter.onActivityResume();
         super.onResume();
     }
+
 
     @Override
     protected void onPause() {
