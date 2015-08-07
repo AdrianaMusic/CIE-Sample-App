@@ -58,7 +58,7 @@ public class PrintSaveImage extends LlFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.print_save_image, container, false);
-
+        MainActivity.printerSelection();
         initControls(view);
         Spinner indexValue = (Spinner) view.findViewById(R.id.index);
 
@@ -509,4 +509,10 @@ public class PrintSaveImage extends LlFragment {
             mFileSel.dismiss();
         }
     };
+
+    @Override
+    public void onResume() {
+        MainActivity.printerSelection();
+        super.onResume();
+    }
 }

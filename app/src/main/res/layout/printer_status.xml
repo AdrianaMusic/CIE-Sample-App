@@ -46,7 +46,6 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="2"
                 android:text="2 Inch"
-                android:checked="true"
                 android:id="@+id/two_inch" />
             <RadioButton
                 android:layout_width="0dp"

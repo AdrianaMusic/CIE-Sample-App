@@ -25,6 +25,7 @@ import android.widget.ToggleButton;
 
 import com.cie.btp.CieBluetoothPrinter;
 import com.cie.btp.DebugLog;
+import com.cie.btp.PrinterWidth;
 import com.cie.cieprinter.BuildConfig;
 import com.cie.cieprinter.R;
 import com.cie.cieprinter.loopedlabs.FragmentMessageListener;
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
     @Override
     protected void onResume() {
         mPrinter.onActivityResume();
+        printerSelection();
         super.onResume();
     }
 
@@ -263,6 +265,16 @@ public class MainActivity extends AppCompatActivity implements  TabListener,Frag
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+    public static void printerSelection(){
+        int printer_selection = mSp.getInt("PRINTER_SELECTION", 0);
+        if (printer_selection==AppConsts.THREE_INCH) {
+            mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_72MM);
+        }else if(printer_selection==AppConsts.FOUR_INCH) {
+            mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_104MM);
+        }else {
+            mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_48MM);
         }
     }
 }
