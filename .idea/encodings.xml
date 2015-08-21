@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/libs/cie-bluetooth-printer-sdk-v1.0.5.jar" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/libs/cie-bluetooth-printer-sdk-v1.0.6.jar" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/cie/cieprinter/app/AppConsts.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/cie/cieprinter/app/MainActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/cie/cieprinter/app/PrintSaveImage.java" charset="UTF-8" />
@@ -41,6 +43,7 @@
     <file url="file://$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/image.png" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/image.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/docs/CoiNel Bluetooth Printer Android SDK User Manual.V.1.0.3.pdf" charset="windows-1252" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

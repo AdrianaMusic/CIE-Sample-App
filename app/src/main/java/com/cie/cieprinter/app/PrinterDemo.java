@@ -172,7 +172,9 @@ public class PrinterDemo extends LlFragment {
         mPrinter.resetPrinter();
         mPrinter.setHighIntensity();
         mPrinter.setAlignmentCenter();
+        mPrinter.setBold();
         mPrinter.printTextLine("MY COMPANY BILL\n");
+        mPrinter.setRegular();
         mPrinter.printTextLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         mPrinter.printLineFeed();
         // Bill Header End
@@ -196,7 +198,9 @@ public class PrinterDemo extends LlFragment {
         mPrinter.printTextLine("  Total              107220.00\n");
         mPrinter.printTextLine("------------------------------\n");
         mPrinter.printLineFeed();
+        mPrinter.setBold();
         mPrinter.printTextLine("    Thank you ! Visit Again   \n");
+        mPrinter.setRegular();
         mPrinter.printLineFeed();
         mPrinter.printTextLine("******************************\n");
         mPrinter.printLineFeed();
