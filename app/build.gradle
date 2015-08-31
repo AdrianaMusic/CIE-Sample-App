@@ -8,8 +8,8 @@ android {
         applicationId "com.cie.cieprinter"
         minSdkVersion 8
         targetSdkVersion 22
-        versionCode 5
-        versionName "1.0.5"
+        versionCode 6
+        versionName "1.0.6"
     }
     buildTypes {
         release {
@@ -23,4 +23,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.google.code.gson:gson:2.3.1'
     compile files('libs/cie-bluetooth-printer-sdk-v1.0.5.jar')
+    compile files('libs/cie-bluetooth-printer-sdk-v1.0.6.jar')
 }
