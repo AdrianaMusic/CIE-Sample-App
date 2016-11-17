@@ -22,7 +22,7 @@ import com.cie.btp.CieBluetoothPrinter;
 import com.cie.btp.PrinterWidth;
 import com.cie.cieprinter.R;
 import com.cie.cieprinter.bill.Bill;
-import com.cie.cieprinter.loopedlabs.LlFragment;
+import com.loopedlabs.LlFragment;
 
 
 public class PrinterDemo extends LlFragment {

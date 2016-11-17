@@ -28,7 +28,7 @@ import com.cie.btp.DebugLog;
 import com.cie.btp.PrinterWidth;
 import com.cie.cieprinter.BuildConfig;
 import com.cie.cieprinter.R;
-import com.cie.cieprinter.loopedlabs.FragmentMessageListener;
+import com.loopedlabs.FragmentMessageListener;
 
 
 public class MainActivity extends AppCompatActivity implements  TabListener,FragmentMessageListener {

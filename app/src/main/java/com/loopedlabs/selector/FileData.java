@@ -1,4 +1,4 @@
-package com.cie.cieprinter.loopedlabs.selector;
+package com.loopedlabs.selector;
 
 /**
  * This class contais information about the file name and type

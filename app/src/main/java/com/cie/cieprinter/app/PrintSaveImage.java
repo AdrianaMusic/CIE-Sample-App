@@ -35,10 +35,10 @@ import android.widget.Toast;
 import com.cie.btp.DebugLog;
 import com.cie.btp.ImageFactory;
 import com.cie.cieprinter.R;
-import com.cie.cieprinter.loopedlabs.LlFragment;
-import com.cie.cieprinter.loopedlabs.selector.FileOperation;
-import com.cie.cieprinter.loopedlabs.selector.FileSelector;
-import com.cie.cieprinter.loopedlabs.selector.OnHandleFileListener;
+import com.loopedlabs.LlFragment;
+import com.loopedlabs.selector.FileOperation;
+import com.loopedlabs.selector.FileSelector;
+import com.loopedlabs.selector.OnHandleFileListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

@@ -1,4 +1,4 @@
-package com.cie.cieprinter.loopedlabs;
+package com.loopedlabs;
 
 public interface FragmentMessageListener {
     public void onAppSignal(int iAppSignal);

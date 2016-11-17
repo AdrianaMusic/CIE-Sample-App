@@ -1,4 +1,4 @@
-package com.cie.cieprinter.loopedlabs.selector;
+package com.loopedlabs.selector;
 
 import android.app.Activity;
 import android.os.Bundle;

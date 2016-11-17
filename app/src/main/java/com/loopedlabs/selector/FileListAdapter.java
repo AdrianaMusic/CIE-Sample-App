@@ -1,4 +1,4 @@
-package com.cie.cieprinter.loopedlabs.selector;
+package com.loopedlabs.selector;
 
 import android.content.Context;
 import android.view.View;
