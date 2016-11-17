@@ -40,10 +40,10 @@ public class PrinterDemo extends LlFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v= inflater.inflate(R.layout.printer_status, container, false);
+        View v = inflater.inflate(R.layout.printer_status, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-       rbTwoInch = (RadioButton) v.findViewById(R.id.two_inch);
+        rbTwoInch = (RadioButton) v.findViewById(R.id.two_inch);
         rbTwoInch.setOnClickListener(onRbClicked);
         rbThreeInch = (RadioButton) v.findViewById(R.id.three_inch);
         rbThreeInch.setOnClickListener(onRbClicked);
@@ -76,8 +76,9 @@ public class PrinterDemo extends LlFragment {
                 try {
                     int d = Integer.parseInt(txt);
                     String data = String.valueOf(d);
-                    mPrinter.printBarcode(data, Barcode.CODE_128, BARCODE_WIDTH, BARCODE_HEIGHT);
-                } catch (NumberFormatException nfe) {
+                    mPrinter.printBarcode(data, Barcode.CODE_128, BARCODE_WIDTH, BARCODE_HEIGHT,1);
+                }
+                catch (NumberFormatException nfe) {
                     Toast.makeText(getActivity(), "Enter Numeric Number to print barcode",
                             Toast.LENGTH_SHORT).show();
                 }
@@ -90,7 +91,7 @@ public class PrinterDemo extends LlFragment {
             @Override
             public void onClick(View v) {
                 String data = etQRcode.getText().toString();
-                mPrinter.printQRcode(data);
+                mPrinter.printQRcode(data,1);
             }
         });
         Button btnTestBill = (Button) v.findViewById(R.id.print_bill);
@@ -123,8 +124,9 @@ public class PrinterDemo extends LlFragment {
         }
         mListener.onAppSignal(AppConsts.UPDATE_UIPREF_PRINTER);*/
 
-     return v;
+        return v;
     }
+
     public View.OnClickListener onRbClicked = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -135,9 +137,9 @@ public class PrinterDemo extends LlFragment {
             switch (v.getId()) {
                 case R.id.two_inch:
                     if (checked) {
-                        boolean r= mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_48MM);
-                        MainActivity.mSp.edit().putInt("PRINTER_SELECTION",AppConsts.TWO_INCH).commit();
-                        if(r){
+                        boolean r = mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_48MM);
+                        MainActivity.mSp.edit().putInt("PRINTER_SELECTION", AppConsts.TWO_INCH).commit();
+                        if (r) {
                             Toast.makeText(getActivity(), "Two Inch Printer Selected",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -146,8 +148,8 @@ public class PrinterDemo extends LlFragment {
                 case R.id.three_inch:
                     if (checked) {
                         boolean r = mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_72MM);
-                        MainActivity.mSp.edit().putInt("PRINTER_SELECTION",AppConsts.THREE_INCH).commit();
-                        if(r){
+                        MainActivity.mSp.edit().putInt("PRINTER_SELECTION", AppConsts.THREE_INCH).commit();
+                        if (r) {
                             Toast.makeText(getActivity(), "Three Inch Printer Selected",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -156,8 +158,8 @@ public class PrinterDemo extends LlFragment {
                 case R.id.four_inch:
                     if (checked) {
                         boolean r = mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_104MM);
-                        MainActivity.mSp.edit().putInt("PRINTER_SELECTION",AppConsts.FOUR_INCH).commit();
-                        if(r){
+                        MainActivity.mSp.edit().putInt("PRINTER_SELECTION", AppConsts.FOUR_INCH).commit();
+                        if (r) {
                             Toast.makeText(getActivity(), "Four Inch Printer Selected",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -166,6 +168,7 @@ public class PrinterDemo extends LlFragment {
             }
         }
     };
+
     private void performPrinterTask() {
 
         mPrinter.setPrintMode(BtpConsts.PRINT_IN_BATCH);
@@ -180,7 +183,7 @@ public class PrinterDemo extends LlFragment {
         // Bill Header End
 
         // Bill Details Start
-        Bill b=new Bill();
+        Bill b = new Bill();
         b.setCustomerName("Test Cust");
         b.setCustomerOrderNo("0045");
 
@@ -218,15 +221,18 @@ public class PrinterDemo extends LlFragment {
         //print all commands
         mPrinter.batchPrint();
     }
-    private void printerSelection(){
-        int printer_selection = MainActivity.mSp.getInt("PRINTER_SELECTION",0);
-        if (printer_selection==AppConsts.THREE_INCH) {
+
+    private void printerSelection() {
+        int printer_selection = MainActivity.mSp.getInt("PRINTER_SELECTION", 0);
+        if (printer_selection == AppConsts.THREE_INCH) {
             rbThreeInch.setChecked(true);
             mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_72MM);
-        }else if (printer_selection==AppConsts.FOUR_INCH) {
+        }
+        else if (printer_selection == AppConsts.FOUR_INCH) {
             rbFourInch.setChecked(true);
             mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_104MM);
-        }else{
+        }
+        else {
             rbTwoInch.setChecked(true);
             mPrinter.setPrinterWidth(PrinterWidth.PRINT_WIDTH_48MM);
         }

@@ -1,63 +1,63 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ScrollView1"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    tools:context=".CaptureImage" >
+<ScrollView android:id="@+id/ScrollView1"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
             android:orientation="horizontal"
-            android:padding="10dp" >
+            android:padding="10dp">
 
             <Button
                 android:id="@+id/btnFromGallery"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/choose_gallery" />
+                android:text="@string/choose_gallery"/>
 
             <Button
                 android:id="@+id/btnCapturePicture"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/choose_camera" />
+                android:text="@string/choose_camera"/>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/textView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView"
-                android:layout_weight="0.5"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"
+                android:layout_weight="0.5"/>
         </LinearLayout>
 
-        <View style="@style/Divider" />
+        <View style="@style/Divider"/>
 
         <TableRow
             android:id="@+id/tr"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -65,7 +65,7 @@
                     android:gravity="center"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
-                    android:text="@string/as_is_preview" />
+                    android:text="@string/as_is_preview"/>
 
                 <ImageView
                     android:id="@+id/imgPreviewAsIs"
@@ -74,7 +74,7 @@
                     android:contentDescription="@string/as_is_preview"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:src="@drawable/placeholder" />
+                    android:src="@drawable/placeholder"/>
 
                 <TextView
                     android:id="@+id/tvAsIsSize"
@@ -83,7 +83,7 @@
                     android:gravity="center"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
-                    android:text="@string/empty" />
+                    android:text="@string/empty"/>
             </LinearLayout>
 
             <LinearLayout
@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -99,7 +99,7 @@
                     android:gravity="center"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
-                    android:text="@string/printer_preview" />
+                    android:text="@string/printer_preview"/>
 
                 <ImageView
                     android:id="@+id/imgPreviewBiTonal"
@@ -108,7 +108,7 @@
                     android:contentDescription="@string/printer_preview"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:src="@drawable/placeholder" />
+                    android:src="@drawable/placeholder"/>
 
                 <TextView
                     android:id="@+id/tvPrintSize"
@@ -117,16 +117,128 @@
                     android:gravity="center"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
-                    android:text="@string/empty" />
+                    android:text="@string/empty"/>
             </LinearLayout>
         </TableRow>
 
-        <View style="@style/Divider" />
+        <LinearLayout
+            android:id="@+id/ll_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="@string/logo_size"/>
+
+            <TextView
+                android:id="@+id/tvlogoSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:gravity="left"
+                android:padding="5dp"
+                android:text="@string/empty"/>
+        </LinearLayout>
+
+        <View style="@style/Divider"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:orientation="vertical"
+            android:padding="7dp">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Image Conversion Algorithm"/>
+
+            <RadioGroup
+                android:id="@+id/rgImgAlgo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbGrayscale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="Grayscale"/>
+
+                <RadioButton
+                    android:id="@+id/rbBinarize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Binarize"/>
+
+            </RadioGroup>
+        </LinearLayout>
+
+        <View style="@style/Divider"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:orientation="vertical"
+            android:padding="7dp">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Image Alignment"/>
+
+            <RadioGroup
+                android:id="@+id/rgImgAlign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbLeftAlign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="Left Align"/>
+
+                <RadioButton
+                    android:id="@+id/rbCenterAlign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Center Align"/>
+
+                <RadioButton
+                    android:id="@+id/rbRightAlign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Right Align"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <View style="@style/Divider"/>
 
         <TableRow
             android:id="@+id/tr1"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/ll_3"
@@ -136,54 +248,34 @@
                 android:layout_weight="1"
                 android:background="@drawable/border"
                 android:orientation="vertical"
-                android:padding="7dp" >
-
-                <LinearLayout
-                    android:id="@+id/ll_4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:orientation="horizontal" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:text="@string/logo_size" />
-
-                    <TextView
-                        android:id="@+id/tvlogoSize"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:gravity="left"
-                        android:padding="5dp"
-                        android:text="@string/empty" />
-                </LinearLayout>
+                android:padding="7dp">
 
                 <CheckBox
                     android:id="@+id/cbInvertBitmap"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/invert_bitmap" />
+                    android:text="@string/invert_bitmap"/>
 
                 <SeekBar
                     android:id="@+id/seekBar"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
+
                 <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingBottom="5dp"
-                        android:paddingTop="5dp"
-                        android:text="@string/adjust_contrast" />
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:text="@string/adjust_contrast"/>
             </LinearLayout>
         </TableRow>
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp">
+
             <LinearLayout
                 android:id="@+id/ll_2"
                 android:layout_width="match_parent"
@@ -192,17 +284,20 @@
                 android:layout_weight="1"
                 android:background="@drawable/border"
                 android:orientation="vertical"
-                android:padding="7dp" >
+                android:padding="7dp">
+
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
-                    android:text="@string/id" />
+                    android:text="@string/id"/>
+
                 <Spinner
                     android:id="@+id/index"
-                    android:layout_height="wrap_content"
-                    android:layout_width="fill_parent"/>
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"/>
+
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -214,7 +309,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="2"
-                        android:text="@string/save_image" />
+                        android:text="@string/save_image"/>
 
                     <Button
                         android:id="@+id/printImage"
@@ -222,10 +317,11 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="2"
-                        android:text="@string/print_saved" />
+                        android:text="@string/print_saved"/>
                 </TableRow>
             </LinearLayout>
         </TableRow>
+
         <Button
             android:id="@+id/printDirect"
             android:layout_width="match_parent"
@@ -234,7 +330,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:padding="10dp"
-            android:text="@string/set_logo" />
+            android:text="@string/set_logo"/>
 
     </LinearLayout>
 

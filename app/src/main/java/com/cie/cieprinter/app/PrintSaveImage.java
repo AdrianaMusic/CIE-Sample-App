@@ -24,9 +24,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +50,8 @@ public class PrintSaveImage extends LlFragment {
     private TextView txtView;
     final String[] mFileFilter = {".png", ".bmp", ".jpeg", ".jpg"};
     private String[] index = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
+    private int imageAlignment = 0;
+    private boolean bImgAlgoGrayScale = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +75,8 @@ public class PrintSaveImage extends LlFragment {
                 TextView textViewItem = (TextView) aView;
                 try {
                     indexNumber = Integer.valueOf(textViewItem.getText().toString());
-                } catch (NullPointerException e) {
+                }
+                catch (NullPointerException e) {
                     DebugLog.logException(e);
                 }
             }
@@ -81,6 +86,44 @@ public class PrintSaveImage extends LlFragment {
             }
         };
         indexValue.setOnItemSelectedListener(onItemSelectedListener);
+
+        RadioGroup rgImgAlign = (RadioGroup) view.findViewById(R.id.rgImgAlign);
+        rgImgAlign.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
+                    case R.id.rbLeftAlign:
+                        imageAlignment = 0;
+                        break;
+                    case R.id.rbCenterAlign:
+                        imageAlignment = 1;
+                        break;
+                    case R.id.rbRightAlign:
+                        imageAlignment = 2;
+                        break;
+                }
+            }
+        });
+
+        final TableRow tr1 = (TableRow) view.findViewById(R.id.tr1);
+
+        RadioGroup rgImgAlgo = (RadioGroup) view.findViewById(R.id.rgImgAlgo);
+        rgImgAlgo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
+                    case R.id.rbBinarize:
+                        bImgAlgoGrayScale = false;
+                        tr1.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.rbGrayscale:
+                        bImgAlgoGrayScale = true;
+                        tr1.setVisibility(View.GONE);
+                        break;
+                }
+                previewImage(threshold);
+            }
+        });
 
         Button SaveImage = (Button) view.findViewById(R.id.saveImage);
         SaveImage.setOnClickListener(new OnClickListener() {
@@ -98,15 +141,18 @@ public class PrintSaveImage extends LlFragment {
                     if (r) {
                         Toast.makeText(getActivity(), "Image saved on index " + indexNumber,
                                 Toast.LENGTH_SHORT).show();
-                    } else {
+                    }
+                    else {
                         Toast.makeText(getActivity(), MainActivity.mPrinter.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
                     }
 
-                } catch (NumberFormatException e) {
+                }
+                catch (NumberFormatException e) {
                     Toast.makeText(getActivity(), "Enter Index for save Image",
                             Toast.LENGTH_SHORT).show();
 
-                } catch (NullPointerException e) {
+                }
+                catch (NullPointerException e) {
                     DebugLog.logException(e);
                 }
             }
@@ -131,13 +177,22 @@ public class PrintSaveImage extends LlFragment {
                     Invert = !bInvertBitmap;
                     DebugLog.logTrace("A : " + bIgnoreAlpha + " I : " + Invert + " T : " + threshold);
 
-                    boolean r = MainActivity.mPrinter.printDirect(fileUri.getPath(), Invert, threshold);
+                    boolean r;
+                    if (bImgAlgoGrayScale) {
+                        r = MainActivity.mPrinter.printGrayScaleImage(fileUri.getPath(), imageAlignment);
+                    }
+                    else {
+                        r = MainActivity.mPrinter.printBinarizedImage(fileUri.getPath(), Invert, threshold, imageAlignment);
+                    }
+
                     if (r) {
                         Toast.makeText(getActivity(), "Image Printed", Toast.LENGTH_SHORT).show();
-                    } else {
+                    }
+                    else {
                         Toast.makeText(getActivity(), MainActivity.mPrinter.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
                     }
-                } catch (NullPointerException e) {
+                }
+                catch (NullPointerException e) {
                     DebugLog.logException(e);
                 }
             }
@@ -185,16 +240,19 @@ public class PrintSaveImage extends LlFragment {
                 // display it in image view
                 previewCapturedImage();
                 previewImage(0);
-            } else if (resultCode == Activity.RESULT_CANCELED) {
+            }
+            else if (resultCode == Activity.RESULT_CANCELED) {
                 // user cancelled Image capture
                 Toast.makeText(getActivity(), R.string.img_capture_cancelled,
                         Toast.LENGTH_SHORT).show();
-            } else {
+            }
+            else {
                 // failed to capture image
                 Toast.makeText(getActivity(), R.string.img_capture_failed,
                         Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == RESULT_LOAD_IMAGE
+        }
+        else if (requestCode == RESULT_LOAD_IMAGE
                 && resultCode == Activity.RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -207,8 +265,8 @@ public class PrintSaveImage extends LlFragment {
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
             fileUri = Uri.parse(picturePath);
-                previewCapturedImage();
-                previewImage(0);
+            previewCapturedImage();
+            previewImage(0);
         }
     }
 
@@ -230,7 +288,8 @@ public class PrintSaveImage extends LlFragment {
                 if (orgImgWidth > orgImgHeight) {
                     inSampleSize = Math.round((float) orgImgHeight
                             / (float) ivAsIsHeight);
-                } else {
+                }
+                else {
                     inSampleSize = Math.round((float) orgImgWidth
                             / (float) ivAsIsWidth);
                 }
@@ -258,7 +317,8 @@ public class PrintSaveImage extends LlFragment {
             imgPreviewAsIs.setImageBitmap(Bitmap.createScaledBitmap(bitmap,
                     imgX, imgY, false));
 
-        } catch (NullPointerException e) {
+        }
+        catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -373,13 +433,11 @@ public class PrintSaveImage extends LlFragment {
             int iLogoHeight = b.getHeight();
             DebugLog.logTrace("invert  " + bInvertBitmap);
 
-            Bitmap bImg = ImageFactory.BinarizeImage(b, bIgnoreAlpha,
-                    bInvertBitmap, threshold);
-
             if (threshold == 0) {
                 this.threshold = ImageFactory.getThreshold();
                 seekBar.setProgress((this.threshold * 100) / 255);
-            } else {
+            }
+            else {
                 this.threshold = threshold;
             }
 
@@ -387,7 +445,7 @@ public class PrintSaveImage extends LlFragment {
 
             tvlogoSize.setText(Integer.toString((iLogoWidth * iLogoHeight) / 16));
 
-            float ratio = (float) bImg.getWidth() / (float) bImg.getHeight();
+            float ratio = (float) b.getWidth() / (float) b.getHeight();
 
             int imgX = ivlogoPreviewWidth;
             int imgY = (int) (ivlogoPreviewWidth / ratio);
@@ -397,9 +455,17 @@ public class PrintSaveImage extends LlFragment {
                 imgX = (int) (ratio * ivLogoPreviewHeight);
             }
 
-            imgLogoPreview.setImageBitmap(Bitmap.createScaledBitmap(bImg, imgX,
-                    imgY, false));
-        } catch (NullPointerException e) {
+            Bitmap bImg = Bitmap.createScaledBitmap(b, imgX, imgY, false);
+
+            if (bImgAlgoGrayScale) {
+                imgLogoPreview.setImageBitmap(ImageFactory.ditherBitmap(bImg));
+            }
+            else {
+                imgLogoPreview.setImageBitmap(ImageFactory.BinarizeImage(bImg, true,
+                        bInvertBitmap, threshold));
+            }
+        }
+        catch (NullPointerException e) {
             DebugLog.logException(e);
         }
     }
@@ -468,10 +534,12 @@ public class PrintSaveImage extends LlFragment {
                             if (fileUri.getPath() == null) {
                                 Toast.makeText(getActivity(), "Select Image ", Toast.LENGTH_SHORT).show();
 
-                            } else {
+                            }
+                            else {
                                 previewImage(threshold);
                             }
-                        } catch (NullPointerException e) {
+                        }
+                        catch (NullPointerException e) {
                             Toast.makeText(getActivity(), "Select Image ", Toast.LENGTH_SHORT).show();
                         }
                     }
