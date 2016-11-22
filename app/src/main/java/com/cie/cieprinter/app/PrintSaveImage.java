@@ -533,7 +533,13 @@ public class PrintSaveImage extends LlFragment {
         printSavedImage.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.mPrinter.printSavedImage(indexNumber);
+                boolean r = MainActivity.mPrinter.printSavedImage(indexNumber);
+                if (r) {
+                    Toast.makeText(getActivity(), "Image Printed", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getActivity(), mPrinter.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
