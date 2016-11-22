@@ -176,7 +176,7 @@ public class PrinterDemo extends LlFragment {
         mPrinter.setHighIntensity();
         mPrinter.setAlignmentCenter();
         mPrinter.setBold();
-        mPrinter.printTextLine("MY COMPANY BILL\n");
+        mPrinter.printTextLine("\nMY COMPANY BILL\n");
         mPrinter.setRegular();
         mPrinter.printTextLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         mPrinter.printLineFeed();

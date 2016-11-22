@@ -45,6 +45,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.cie.cieprinter.app.MainActivity.mPrinter;
+
 public class PrintSaveImage extends LlFragment {
     private int indexNumber;
     private TextView txtView;
@@ -64,139 +66,6 @@ public class PrintSaveImage extends LlFragment {
         View view = inflater.inflate(R.layout.print_save_image, container, false);
         MainActivity.printerSelection();
         initControls(view);
-        Spinner indexValue = (Spinner) view.findViewById(R.id.index);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, index);
-        indexValue.setAdapter(adapter);
-        AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> aAdapter, View aView, int arg2, long arg3) {
-                TextView textViewItem = (TextView) aView;
-                try {
-                    indexNumber = Integer.valueOf(textViewItem.getText().toString());
-                }
-                catch (NullPointerException e) {
-                    DebugLog.logException(e);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-            }
-        };
-        indexValue.setOnItemSelectedListener(onItemSelectedListener);
-
-        RadioGroup rgImgAlign = (RadioGroup) view.findViewById(R.id.rgImgAlign);
-        rgImgAlign.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i) {
-                    case R.id.rbLeftAlign:
-                        imageAlignment = 0;
-                        break;
-                    case R.id.rbCenterAlign:
-                        imageAlignment = 1;
-                        break;
-                    case R.id.rbRightAlign:
-                        imageAlignment = 2;
-                        break;
-                }
-            }
-        });
-
-        final TableRow tr1 = (TableRow) view.findViewById(R.id.tr1);
-
-        RadioGroup rgImgAlgo = (RadioGroup) view.findViewById(R.id.rgImgAlgo);
-        rgImgAlgo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i) {
-                    case R.id.rbBinarize:
-                        bImgAlgoGrayScale = false;
-                        tr1.setVisibility(View.VISIBLE);
-                        break;
-                    case R.id.rbGrayscale:
-                        bImgAlgoGrayScale = true;
-                        tr1.setVisibility(View.GONE);
-                        break;
-                }
-                previewImage(threshold);
-            }
-        });
-
-        Button SaveImage = (Button) view.findViewById(R.id.saveImage);
-        SaveImage.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (fileUri.getPath() == null) {
-                        Toast.makeText(getActivity(), "No Logo Selected",
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    Boolean Invert;
-                    Invert = !bInvertBitmap;
-                    boolean r = MainActivity.mPrinter.saveImage(fileUri.getPath(), Invert, threshold, indexNumber);
-                    if (r) {
-                        Toast.makeText(getActivity(), "Image saved on index " + indexNumber,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(getActivity(), MainActivity.mPrinter.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-                catch (NumberFormatException e) {
-                    Toast.makeText(getActivity(), "Enter Index for save Image",
-                            Toast.LENGTH_SHORT).show();
-
-                }
-                catch (NullPointerException e) {
-                    DebugLog.logException(e);
-                }
-            }
-        });
-        Button printSavedImage = (Button) view.findViewById(R.id.printImage);
-        printSavedImage.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity.mPrinter.printSavedImage(indexNumber);
-            }
-        });
-        Button printDirect = (Button) view.findViewById(R.id.printDirect);
-        printDirect.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    if (fileUri.getPath() == null) {
-                        Toast.makeText(getActivity(), "No Logo Selected",
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    Boolean Invert;
-                    Invert = !bInvertBitmap;
-                    DebugLog.logTrace("A : " + bIgnoreAlpha + " I : " + Invert + " T : " + threshold);
-
-                    boolean r;
-                    if (bImgAlgoGrayScale) {
-                        r = MainActivity.mPrinter.printGrayScaleImage(fileUri.getPath(), imageAlignment);
-                    }
-                    else {
-                        r = MainActivity.mPrinter.printBinarizedImage(fileUri.getPath(), Invert, threshold, imageAlignment);
-                    }
-
-                    if (r) {
-                        Toast.makeText(getActivity(), "Image Printed", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(getActivity(), MainActivity.mPrinter.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                catch (NullPointerException e) {
-                    DebugLog.logException(e);
-                }
-            }
-        });
         return view;
     }
 
@@ -565,6 +434,142 @@ public class PrintSaveImage extends LlFragment {
             }
         });
 
+        Spinner indexValue = (Spinner) v.findViewById(R.id.index);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, index);
+        indexValue.setAdapter(adapter);
+        AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> aAdapter, View aView, int arg2, long arg3) {
+                TextView textViewItem = (TextView) aView;
+                try {
+                    indexNumber = Integer.valueOf(textViewItem.getText().toString());
+                    DebugLog.logTrace("Index Number : " + indexNumber);
+                }
+                catch (NullPointerException e) {
+                    DebugLog.logException(e);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        };
+        indexValue.setOnItemSelectedListener(onItemSelectedListener);
+
+        RadioGroup rgImgAlign = (RadioGroup) v.findViewById(R.id.rgImgAlign);
+        rgImgAlign.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
+                    case R.id.rbLeftAlign:
+                        imageAlignment = 0;
+                        break;
+                    case R.id.rbCenterAlign:
+                        imageAlignment = 1;
+                        break;
+                    case R.id.rbRightAlign:
+                        imageAlignment = 2;
+                        break;
+                }
+            }
+        });
+
+        final TableRow tr1 = (TableRow) v.findViewById(R.id.tr1);
+
+        RadioGroup rgImgAlgo = (RadioGroup) v.findViewById(R.id.rgImgAlgo);
+        rgImgAlgo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
+                    case R.id.rbBinarize:
+                        bImgAlgoGrayScale = false;
+                        tr1.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.rbGrayscale:
+                        bImgAlgoGrayScale = true;
+                        tr1.setVisibility(View.GONE);
+                        break;
+                }
+                previewImage(threshold);
+            }
+        });
+
+        Button SaveImage = (Button) v.findViewById(R.id.saveImage);
+        SaveImage.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (fileUri.getPath() == null) {
+                        Toast.makeText(getActivity(), "No Logo Selected",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Boolean Invert;
+                    Invert = !bInvertBitmap;
+                    boolean r = mPrinter.saveImage(fileUri.getPath(), Invert, threshold, indexNumber);
+                    if (r) {
+                        Toast.makeText(getActivity(), "Image saved on index " + indexNumber,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(getActivity(), mPrinter.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                catch (NumberFormatException e) {
+                    Toast.makeText(getActivity(), "Enter Index for save Image",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+                catch (NullPointerException e) {
+                    DebugLog.logException(e);
+                }
+            }
+        });
+
+        Button printSavedImage = (Button) v.findViewById(R.id.printImage);
+        printSavedImage.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.mPrinter.printSavedImage(indexNumber);
+            }
+        });
+
+        Button printDirect = (Button) v.findViewById(R.id.printDirect);
+        printDirect.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                try {
+                    if (fileUri.getPath() == null) {
+                        Toast.makeText(getActivity(), "No Logo Selected",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Boolean Invert;
+                    Invert = !bInvertBitmap;
+                    DebugLog.logTrace("A : " + bIgnoreAlpha + " I : " + Invert + " T : " + threshold);
+
+                    boolean r;
+                    if (bImgAlgoGrayScale) {
+                        r = mPrinter.printGrayScaleImage(fileUri.getPath(), imageAlignment);
+                    }
+                    else {
+                        r = mPrinter.printBinarizedImage(fileUri.getPath(), Invert, threshold, imageAlignment);
+                    }
+
+                    if (r) {
+                        Toast.makeText(getActivity(), "Image Printed", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(getActivity(), mPrinter.getPrinterStatusMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                catch (NullPointerException e) {
+                    DebugLog.logException(e);
+                }
+            }
+        });
     }
 
     OnHandleFileListener mLoadFileListener = new OnHandleFileListener() {
